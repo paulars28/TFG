@@ -1,0 +1,5 @@
+select_model: mlp
+epochs: 50
+model_name: diabetesKAN.pth
+learning_rate: 0.001
+batch_size: 128
