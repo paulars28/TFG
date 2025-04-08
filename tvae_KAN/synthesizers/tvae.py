@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 from data_transformer import DataTransformer
 print("aqui")
-from ctgan.synthesizers.base import BaseSynthesizer, random_state
+from synthesizers.base import BaseSynthesizer, random_state
 
 from kan.KANLayer import KANLayer  
 

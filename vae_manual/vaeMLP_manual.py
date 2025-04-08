@@ -15,7 +15,7 @@ from sklearn.metrics import mean_squared_error
 # ------------------------------
 BATCH_SIZE = 32
 EPOCHS = 40
-LATENT_DIM = 64
+LATENT_DIM = 32
 
 # ------------------------------
 # Dataset

@@ -127,7 +127,7 @@ def evaluate_model(test_loader, model, device, model_name):
 
     save_eval_arrays(model_name, all_labels, all_probs)
     plot_eval_curves(all_labels, all_probs, model_name)
-    plot_confusion_matrix_heatmap(all_labels, all_preds, model_name, threshold=0.5)
+    plot_confusion_matrix_heatmap(all_labels, all_preds, model_name)
     
 
 

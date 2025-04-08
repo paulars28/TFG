@@ -29,7 +29,7 @@ epochs = cfg["epochs"]
 model_name = cfg["model_name"]
 
 train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist = train_eval_loop(train_loader, test_loader, model, epochs, optimizer, criterion, device, cfg["model_name"])
-evaluate_model(test_loader, model, device)
+evaluate_model(test_loader, model, device, model_name)
 plot_loss_acc(train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist)
 
 

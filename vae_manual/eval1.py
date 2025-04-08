@@ -256,8 +256,8 @@ if __name__ == "__main__":
     sys.stdout = DualOutput("dbeval/results.txt")
 
     real_path = "/home/gtav-tft/Desktop/SYNTHEMA/TVAE/SYNTHDATA/diabetes.csv"
-    tvae_path = "/home/gtav-tft/Desktop/SYNTHEMA/TVAE/SYNTHDATA/synthetic_diabetes_mlp.csv"
-    kan_path = "/home/gtav-tft/Desktop/SYNTHEMA/TVAE/SYNTHDATA/synthetic_diabetes_kan.csv"
+    tvae_path = "/home/gtav-tft/Desktop/paula/vae_manual/synthetic_diabetes_mlp.csv"
+    kan_path = "/home/gtav-tft/Desktop/paula/vae_manual/synthetic_diabetes_kan.csv"
 
     evaluator = SyntheticDataEvaluator(
         real_data_path=real_path,

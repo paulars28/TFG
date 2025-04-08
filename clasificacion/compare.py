@@ -178,8 +178,8 @@ def compare_eval_curves(labels_probs_dict, model_names=("KAN", "MLP"), save=Fals
 if __name__ == "__main__":
 
     files = [
-        "./prueba4/diabetesMLP_metricas.txt",
-        "./prueba4/diabetesKAN_metricas.txt",
+        "diabetesMLP_metricas.txt",
+        "diabetesKAN_metricas.txt",
     ]
     df_comparativa = compare_models(files, save_csv=True)
     plot_model_comparison(df_comparativa, kind="bar", save=True, output_file="comparativa_modelos.png")

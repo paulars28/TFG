@@ -20,7 +20,7 @@ from kan.KANLayer import KANLayer
 # ------------------------------
 BATCH_SIZE = 32
 EPOCHS = 40
-LATENT_DIM = 64
+LATENT_DIM = 32
 
 # ------------------------------
 # Dataset
@@ -38,7 +38,7 @@ class DiabetesDataset(Dataset):
 # ------------------------------
 # Modelo VAE con KAN ajustado
 # ------------------------------
-class VAE_KAN(nn.Module):
+'''class VAE_KAN(nn.Module):
     def __init__(self, input_dim, latent_dim=LATENT_DIM):
         super(VAE_KAN, self).__init__()
         self.kan_enc = KANLayer(input_dim, 128)
@@ -66,7 +66,58 @@ class VAE_KAN(nn.Module):
     def forward(self, x):
         mu, logvar = self.encode(x)
         z = self.sampling(mu, logvar)
-        return self.decode(z), mu, logvar
+        return self.decode(z), mu, logvar'''
+
+
+
+class VAE_KAN(nn.Module):
+    """Variational Autoencoder con arquitectura basada en capas KAN."""
+
+    def __init__(self, input_dim, compress_dims, latent_dim):
+        super(VAE_KAN, self).__init__()
+
+        # Codificador con dos capas KAN + capas lineales para mu y logvar
+        self.enc_kan1 = KANLayer(in_dim=input_dim, out_dim=compress_dims[0])
+        self.enc_kan2 = KANLayer(in_dim=compress_dims[0], out_dim=compress_dims[1])
+        self.fc_mu = nn.Linear(compress_dims[1], latent_dim)
+        self.fc_logvar = nn.Linear(compress_dims[1], latent_dim)
+
+        # Decodificador con tres capas KAN
+        self.dec_kan1 = KANLayer(in_dim=latent_dim, out_dim=compress_dims[1])
+        self.dec_kan2 = KANLayer(in_dim=compress_dims[1], out_dim=compress_dims[0])
+        self.dec_out = KANLayer(in_dim=compress_dims[0], out_dim=input_dim)
+
+        # Parámetro de desviación estándar aprendible para reconstrucción
+        self.sigma = nn.Parameter(torch.ones(input_dim) * 0.1)
+
+    def encode(self, x):
+        """Transforma x en parámetros latentes mu y logvar."""
+        h, *_ = self.enc_kan1(x)
+        h, *_ = self.enc_kan2(h)
+        mu = self.fc_mu(h)
+        logvar = self.fc_logvar(h)
+        std = torch.exp(0.5 * logvar)
+        return mu, logvar, std
+
+    def sampling(self, mu, std):
+        """Aplica la reparametrización para muestrear z."""
+        eps = torch.randn_like(std)
+        return mu + eps * std
+
+    def decode(self, z):
+        """Reconstruye los datos desde el espacio latente z."""
+        h, *_ = self.dec_kan1(z)
+        h, *_ = self.dec_kan2(h)
+        out, *_ = self.dec_out(h)
+        return out
+
+    def forward(self, x):
+        """Paso completo: codificación, muestreo y decodificación."""
+        mu, logvar, std = self.encode(x)
+        z = self.sampling(mu, std)
+        recon_x = self.decode(z)
+        return recon_x, mu, logvar
+
 
 # ------------------------------
 # Pérdida
@@ -94,9 +145,20 @@ train_loader = DataLoader(DiabetesDataset(X_train), batch_size=BATCH_SIZE, shuff
 # ------------------------------
 # Entrenamiento
 # ------------------------------
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = VAE_KAN(input_dim=X_all.shape[1]).to(device)
+'''model = VAE_KAN(input_dim=X_all.shape[1]).to(device)'''
+
+input_dim = X_all.shape[1]
+compress_dims = [128, 64]
+latent_dim = LATENT_DIM
+
+model = VAE_KAN(input_dim=input_dim, compress_dims=compress_dims, latent_dim=latent_dim).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+
+
+
 
 for epoch in range(EPOCHS):
     model.train()

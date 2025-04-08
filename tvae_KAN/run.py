@@ -28,18 +28,19 @@ real_data = load_demo()
 ]'''
 
 discrete_columns = [
-    'outcome'
+    'Outcome'
 ]
 
 real_data = real_data.dropna()  
 
 
 tvae = TVAE(
-    epochs=200,  
-    compress_dims=(70, 70),
-    batch_size=500, 
-      
+    epochs=30,  
+    compress_dims=(64, 32),
+    embedding_dim=32,
+    batch_size=32,    
 )
+
 print("TVAE is defined in:", TVAE.__module__)
 
 
@@ -60,7 +61,10 @@ synthetic_data = tvae.sample(32561)
 #for col in categorical_columns:
 #    synthetic_data[col] = synthetic_data[col].apply(lambda x: f" {x}" if pd.notna(x) else x)
 # Guardar los datos sintéticos generados
-synthetic_data.to_csv("synthetic_data_tvaeKANDIABETES30-300.csv", index=False)
+categorical_columns= [
+    'Outcome'
+]
+synthetic_data.to_csv("synthetic_diabetes_kan.csv", index=False)
 
 
 

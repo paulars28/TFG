@@ -1,0 +1,100 @@
+Columnas del dataset real:
+Index(['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin',
+       'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome'],
+      dtype='object')
+
+================ COMPARACIÓN ESTADÍSTICA =================
+
+Comparación Estadística:
+                          Real Mean  TVAE Mean  KAN Mean  Real Std  TVAE Std   KAN Std
+Pregnancies                0.226180   0.222350  0.174758  0.198210  0.134665  0.128582
+Glucose                    0.607510   0.607006  0.590468  0.160666  0.116127  0.109897
+BloodPressure              0.566438   0.570643  0.574395  0.158654  0.091995  0.067993
+SkinThickness              0.207439   0.210806  0.213296  0.161134  0.103243  0.114393
+Insulin                    0.094326   0.086787  0.086236  0.136222  0.083118  0.080755
+BMI                        0.476790   0.480271  0.468341  0.117499  0.089014  0.069180
+DiabetesPedigreeFunction   0.168179   0.159395  0.154482  0.141473  0.095761  0.071104
+Age                        0.204015   0.180447  0.166430  0.196004  0.129871  0.130621
+Outcome                    0.348958   0.300781  0.302048  0.476951  0.458897  0.459153
+
+================ DISTRIBUCIONES KDE =================
+
+================ EFICACIA EN MODELOS DE ML =================
+
+Evaluación de Modelos de Machine Learning:
+RandomForest entrenado en TVAE - Accuracy: 0.7403, F1: 0.7351
+RandomForest entrenado en KAN - Accuracy: 0.7208, F1: 0.7247
+GradientBoosting entrenado en TVAE - Accuracy: 0.7143, F1: 0.7143
+GradientBoosting entrenado en KAN - Accuracy: 0.7208, F1: 0.7240
+
+================ TEST KOLMOGOROV-SMIRNOV =================
+
+Prueba de Kolmogorov-Smirnov:
+Pregnancies - TVAE: KS=0.1771, p=0.0000; KAN: KS=0.1615, p=0.0000
+Glucose - TVAE: KS=0.0911, p=0.0034; KAN: KS=0.1693, p=0.0000
+BloodPressure - TVAE: KS=0.1003, p=0.0009; KAN: KS=0.1417, p=0.0000
+SkinThickness - TVAE: KS=0.2682, p=0.0000; KAN: KS=0.2956, p=0.0000
+Insulin - TVAE: KS=0.4076, p=0.0000; KAN: KS=0.3782, p=0.0000
+BMI - TVAE: KS=0.0612, p=0.1127; KAN: KS=0.1315, p=0.0000
+DiabetesPedigreeFunction - TVAE: KS=0.2448, p=0.0000; KAN: KS=0.2278, p=0.0000
+Age - TVAE: KS=0.1341, p=0.0000; KAN: KS=0.1710, p=0.0000
+Outcome - TVAE: KS=0.0482, p=0.3350; KAN: KS=0.0469, p=0.0714
+
+================ LIKELIHOOD FITNESS =================
+
+**Métrica de Ajuste de Verosimilitud (Likelihood Fitness) usando GMM**
+TVAE - Lsyn: 11.8218, Ltest: 6.9006
+KAN  - Lsyn: 13.0950, Ltest: -1.9404
+
+================ JENSEN-SHANNON DIVERGENCE =================
+
+Divergencia de Jensen-Shannon en columnas categóricas:
+Outcome - TVAE: 0.0054, KAN: 0.0051
+
+================ PCA Y t-SNE: PROYECCIONES =================
+
+================ PCA Y t-SNE: MÉTRICAS =================
+
+Métricas PCA y t-SNE (Error de Reconstrucción y Divergencia KL):
+TVAE - PCA Var: 0.6901, Recon. Error: 0.2775, t-SNE KL: 22.4435
+KAN - PCA Var: 0.6901, Recon. Error: 0.2741, t-SNE KL: 22.1779
+
+================ CORRELACIÓN (MAE & SPEARMAN) =================
+
+Métricas de correlación y correlación de Spearman:
+TVAE - MAE Corr: 0.0473
+TVAE - 1 de 9 variables con p < 0.05
+TVAE - Spearman por variable (coef, p-valor):
+   Pregnancies: coef=-0.0084, p=8.1537e-01
+   Glucose: coef=-0.0281, p=4.3640e-01
+   BloodPressure: coef=0.0337, p=3.5090e-01
+   SkinThickness: coef=-0.0023, p=9.4904e-01
+   Insulin: coef=-0.0079, p=8.2787e-01
+   BMI: coef=-0.0209, p=5.6257e-01
+   DiabetesPedigreeFunction: coef=0.0756, p=3.6167e-02
+   Age: coef=0.0383, p=2.8872e-01
+   Outcome: coef=-0.0155, p=6.6714e-01
+KAN - MAE Corr: 0.1041
+KAN - 1 de 9 variables con p < 0.05
+KAN - Spearman por variable (coef, p-valor):
+   Pregnancies: coef=0.0070, p=8.4656e-01
+   Glucose: coef=-0.0504, p=1.6276e-01
+   BloodPressure: coef=0.0022, p=9.5086e-01
+   SkinThickness: coef=0.0172, p=6.3315e-01
+   Insulin: coef=-0.0185, p=6.0909e-01
+   BMI: coef=-0.0529, p=1.4304e-01
+   DiabetesPedigreeFunction: coef=0.0111, p=7.5867e-01
+   Age: coef=-0.0292, p=4.1944e-01
+   Outcome: coef=-0.0791, p=2.8440e-02
+
+================ DISTANCIA DE FRECHET =================
+
+Distancia de Frechet entre representaciones reales y sintéticas:
+TVAE - Frechet Distance: 0.0813
+KAN  - Frechet Distance: 0.1239
+
+================ COMPROBACIÓN DE DUPLICADOS =================
+
+Comprobación de duplicados exactos en datos sintéticos:
+TVAE - Duplicados: 137, Ratio: 17.84%
+KAN  - Duplicados: 0, Ratio: 0.00%

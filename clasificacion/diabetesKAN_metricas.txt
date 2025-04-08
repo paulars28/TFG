@@ -1,0 +1,24 @@
+Evaluation Metrics for model: diabetesKAN
+
+Accuracy:           0.7857
+Precision:          0.7037
+Recall:             0.6909
+F1 Score:           0.6972
+ROC AUC:            0.8340
+PR AUC:             0.7535
+Matthews CorrCoef:  0.5315
+
+Confusion Matrix:
+[[83 16]
+ [17 38]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0     0.8300    0.8384    0.8342        99
+         1.0     0.7037    0.6909    0.6972        55
+
+    accuracy                         0.7857       154
+   macro avg     0.7669    0.7646    0.7657       154
+weighted avg     0.7849    0.7857    0.7853       154
+

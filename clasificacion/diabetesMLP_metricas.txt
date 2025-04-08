@@ -1,0 +1,24 @@
+Evaluation Metrics for model: diabetesMLP
+
+Accuracy:           0.7532
+Precision:          0.6545
+Recall:             0.6545
+F1 Score:           0.6545
+ROC AUC:            0.8163
+PR AUC:             0.7099
+Matthews CorrCoef:  0.4626
+
+Confusion Matrix:
+[[80 19]
+ [19 36]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0     0.8081    0.8081    0.8081        99
+         1.0     0.6545    0.6545    0.6545        55
+
+    accuracy                         0.7532       154
+   macro avg     0.7313    0.7313    0.7313       154
+weighted avg     0.7532    0.7532    0.7532       154
+
