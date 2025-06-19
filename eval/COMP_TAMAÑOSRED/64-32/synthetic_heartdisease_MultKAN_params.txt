@@ -1,0 +1,10 @@
+Parámetros del modelo TVAE utilizados:
+epochs = 100
+compress_dims = (64, 32)
+embedding_dim = 32
+batch_size = 32
+discrete_columns = ['HeartDisease', 'Gender']
+n_sampled_rows = 20000
+input_data_shape = (500, 7)
+=== Decoder (MultKAN) ===
+

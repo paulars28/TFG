@@ -1,0 +1,8 @@
+Parámetros del modelo TVAE utilizados:
+epochs = 100
+compress_dims = (16, 8)
+embedding_dim = 8
+batch_size = 32
+discrete_columns = ['HeartDisease', 'Gender']
+n_sampled_rows = 20000
+input_data_shape = (500, 7)

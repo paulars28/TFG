@@ -1,0 +1,10 @@
+índice,profundidad,altura_arbol,n_subexpresiones,funciones_no_lineales
+1,903,12,1443,"['sin', 'cos', 'exp']"
+2,714,12,1144,"['sin', 'cos', 'exp']"
+3,902,12,1441,"['sin', 'cos', 'exp']"
+4,713,12,1142,"['sin', 'cos', 'exp']"
+5,903,12,1443,"['sin', 'cos', 'exp']"
+6,903,12,1443,"['sin', 'cos', 'exp']"
+7,904,12,1445,"['sin', 'cos', 'exp']"
+8,902,12,1447,"['sin', 'cos', 'exp']"
+9,902,12,1441,"['sin', 'cos', 'exp']"

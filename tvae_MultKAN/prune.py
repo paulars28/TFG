@@ -12,35 +12,58 @@ from kan.MultKAN import MultKAN
 
 estructura = "decoder" #encoder/decoder
 poda = "node" #node/edge
+arquitectura = "32-16"
+threshold=5e-2
 
-modelo_path = "./MODELOS/final_decoder_stateDIABETES"
-modelo_cache = "./MODELOS/final_decoder_cache_dataDIABETES"
+modelo_path = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_stateHeartDisease"
+modelo_cache = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_cache_dataHeartDisease"
 device= 'cuda'
+state_dict = torch.load(modelo_path, map_location="cuda")
 
 
 data_dim = 9 
-compress_dims = [5, 5] 
-embedding_dim = 5  
+compress_dims = [32, 16] 
+embedding_dim = 16
+
+for key, value in state_dict.items():
+    print(f"{key}: {value.shape}")
+
+def reconstruccion_checkpoint(modelo_path, device='cpu'):
+    dic = torch.load(modelo_path, device)
+    width = []
+    i = 0
+    while f'act_fun.{i}.coef' in dic:
+        in_dim, out_dim, n_splines = dic[f'act_fun.{i}.coef'].shape
+        if i == 0:
+            width.append(in_dim)
+        width.append(out_dim)
+        i += 1
 
 
+    print(f"Reconstruyendo MultKAN con dimensiones: {width}")
+    multkan = MultKAN(width=width, device=device)
+    multkan.load_state_dict(dic, strict=True)
+    return multkan
 
 
-from ctgan.synthesizers.tvae import Decoder 
-from ctgan.synthesizers.tvae import Encoder
+from synthesizers.tvae import Decoder 
+from synthesizers.tvae import Encoder
+
 if estructura == "decoder":
-    modelo = Decoder(embedding_dim, compress_dims, data_dim).to('cuda') 
-    multkan = modelo.multkan_decoder
+    modelo = Decoder(embedding_dim, compress_dims, data_dim).to(device) 
+    #multkan = modelo.multkan_decoder
 elif estructura == "encoder":
-    modelo = Encoder(embedding_dim, compress_dims, data_dim).to('cuda')   
-    multkan = modelo.multkan_encoder
+    modelo = Encoder(embedding_dim, compress_dims, data_dim).to(device)   
+    #multkan = modelo.multkan_encoder
 else:
     raise ValueError("No se ha indicado correctamente la estructura a analizar: ENCODER/DECODER")
-multkan.load_state_dict(torch.load(modelo_path, map_location=device), strict=True)
+
+multkan = reconstruccion_checkpoint(modelo_path, device=device)
 multkan.cache_data = torch.load(modelo_cache, map_location=device)
-modelo.eval()
+multkan.eval()
 
 
-print("EStablecemos activaciones antes de prune_node...")
+print("Establecemos activaciones del modelo antes de prune_node")
 acts = []
 acts_premult = []
 spline_preacts = []
@@ -53,14 +76,15 @@ edge_actscale = []
 
 
 if estructura == "encoder":
+    modelo.multkan_encoder = multkan
     net = modelo.multkan_encoder
 elif estructura == "decoder":
+    modelo.multkan_decoder = multkan
     net = modelo.multkan_decoder
 else:
-    raise ValueError("Estructura debe ser 'encoder' o 'decoder'")
+    raise ValueError("estructura no válida")
 
-x = net.cache_data.to('cuda')
-
+x = net.cache_data.to(device)
 acts.append(x)
 
 for l in range(net.depth):
@@ -104,17 +128,19 @@ net.attribute()
 
 if poda == "node":
 
-    print(f"\nEjecutando poda en nodos del {estructura.upper()}...")
+    print(f"\nEjecutando poda en nodos del {estructura.upper()} con threshold {threshold}")
     print(f"Dimensiones antes de poda: {multkan.width}")
-    multkan = multkan.prune_node()
-    print(f"Dimensiones después de poda: {multkan.width}")
+    multkan = multkan.prune_node(threshold)
+    print(f"Dimensiones post-poda: {multkan.width}")
 
 elif poda == "edge":
     print(f"\nEjecutando poda en conexiones del {estructura.upper()}...")
-    multkan.attribute()
+   # multkan.attribute()
     multkan = multkan.prune_edge()
 else:
     raise ValueError("Valor de poda debe ser 'node' o 'edge'")
+
+multkan.cache_data = torch.load(modelo_cache, map_location=device)
 
 
 if estructura == "decoder":
@@ -123,8 +149,7 @@ else:
     modelo.multkan_encoder = multkan
 
 
-
-print("Restaurando activaciones tras prune_node...")
+print("Restauramos activaciones tras prune_node")
 acts = []
 acts_premult = []
 spline_preacts = []
@@ -143,8 +168,7 @@ elif estructura == "decoder":
 else:
     raise ValueError("Estructura debe ser 'encoder' o 'decoder'")
 
-x = net.cache_data.to('cuda')
-
+x = net.cache_data.to(device)
 acts.append(x)
 
 for l in range(net.depth):
@@ -184,12 +208,11 @@ net.subnode_actscale = subnode_actscale
 net.edge_actscale = edge_actscale
 net.attribute()
 
-print(f"Activaciones restauradas correctamente en {estructura.upper()}.")
+print(f"Activaciones restauradas con éxito")
 
 
 def save_multkan_model(model, path):
-    """Guarda el modelo MultKAN en tres archivos: _state, _config.yml, _cache_data."""
-    
+
     directory = os.path.dirname(path)
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -216,17 +239,15 @@ def save_multkan_model(model, path):
     for i in range(model.depth):
         config[f'symbolic.funs_name.{i}'] = model.symbolic_fun[i].funs_name
 
-    with open(f'{path}_config.yml', 'w') as outfile:
+    with open(f'{path}'+poda+'_config.yml', 'w') as outfile:
         yaml.dump(config, outfile, default_flow_style=False)
 
-    torch.save(model.state_dict(), f'{path}_state')
+    torch.save(model.state_dict(), f'{path}'+poda+'_state')
 
     if model.cache_data is not None:
-        torch.save(model.cache_data, f'{path}_cache_data')
+        torch.save(model.cache_data, f'{path}'+poda+'_cache_data')
 
     print(f"Modelo guardado correctamente en: {path}_state, {path}_config.yml, {path}_cache_data")
 
-
-print(f"\nGuardamos modelo tras poda en {poda} sobre {estructura.upper()}...")
-fichero = "./prune_result/"+estructura+"_pruned"
+fichero = "./resultado_poda_"+poda+"/"+estructura+"_pruned"
 save_multkan_model(net, fichero)

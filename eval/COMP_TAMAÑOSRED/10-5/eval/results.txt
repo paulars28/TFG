@@ -1,0 +1,151 @@
+Columnas del dataset real:
+Index(['Age', 'Gender', 'BloodPressure', 'Cholesterol', 'HeartRate',
+       'QuantumPatternFeature', 'HeartDisease'],
+      dtype='object')
+
+================ COMPARACIÓN ESTADÍSTICA =================
+
+Comparación Estadística:
+                       Real Mean  TVAE Mean  KAN Mean  Real Std  TVAE Std   KAN Std
+Age                     0.507429   0.502929  0.476490  0.292143  0.315084  0.184017
+Gender                  0.468000   0.564000  0.311000  0.499475  0.496011  0.463019
+BloodPressure           0.481730   0.258584  0.435635  0.296837  0.283840  0.119072
+Cholesterol             0.479866   0.500923  0.535342  0.294387  0.365223  0.222529
+HeartRate               0.487559   0.406898  0.485754  0.295208  0.343930  0.078472
+QuantumPatternFeature   0.465936   0.478796  0.495626  0.199046  0.238242  0.111067
+HeartDisease            0.600000   0.597000  0.653000  0.490389  0.490623  0.476135
+
+================ EFICACIA EN MODELOS DE ML =================
+
+Evaluación de Modelos de Machine Learning:
+RandomForest entrenado en TVAE - Accuracy: 0.7200, F1: 0.7200
+RandomForest entrenado en KAN - Accuracy: 0.9400, F1: 0.9404
+GradientBoosting entrenado en TVAE - Accuracy: 0.7200, F1: 0.7200
+GradientBoosting entrenado en KAN - Accuracy: 0.9400, F1: 0.9404
+
+================ TEST KOLMOGOROV-SMIRNOV =================
+
+Prueba de Kolmogorov-Smirnov:
+Age - TVAE: KS=0.0385, p=0.5856; KAN: KS=0.2260, p=0.0000
+Gender - TVAE: KS=0.0960, p=0.0012; KAN: KS=0.1570, p=0.0000
+BloodPressure - TVAE: KS=0.4390, p=0.0000; KAN: KS=0.2940, p=0.0000
+Cholesterol - TVAE: KS=0.1740, p=0.0000; KAN: KS=0.2220, p=0.0000
+HeartRate - TVAE: KS=0.2355, p=0.0000; KAN: KS=0.4260, p=0.0000
+QuantumPatternFeature - TVAE: KS=0.0745, p=0.0228; KAN: KS=0.2370, p=0.0000
+HeartDisease - TVAE: KS=0.0030, p=1.0000; KAN: KS=0.0530, p=0.2068
+
+================ LIKELIHOOD FITNESS =================
+
+**Métrica de Ajuste de Verosimilitud (Likelihood Fitness) usando GMM con tamaños igualados**
+TVAE - Lsyn: 10.1248, Ltest: -1.0789
+KAN  - Lsyn: 12.4326, Ltest: -2422.1126
+
+================ JENSEN-SHANNON DIVERGENCE =================
+
+Divergencia de Jensen-Shannon en columnas categóricas:
+HeartDisease - TVAE: 0.0000, KAN: 0.0061
+
+================ CORRELACIÓN (MAE & SPEARMAN) =================
+
+Métricas de correlación y correlación de Spearman:
+
+=== TVAE ===
+MAE de la matriz de correlación (Pearson): 0.2500
+Variables con correlación de Spearman significativa (p < 0.05): 0 / 7
+Variable                   Coef      p-valor
+---------------------------------------------
+Age                      0.0631   1.5908e-01
+Gender                  -0.0127   7.7718e-01
+BloodPressure           -0.0610   1.7323e-01
+Cholesterol              0.0137   7.5973e-01
+HeartRate                0.0171   7.0343e-01
+QuantumPatternFeature     0.0197   6.5971e-01
+HeartDisease            -0.0201   6.5437e-01
+
+=== KAN ===
+MAE de la matriz de correlación (Pearson): 0.2227
+Variables con correlación de Spearman significativa (p < 0.05): 1 / 7
+Variable                   Coef      p-valor
+---------------------------------------------
+Age                      0.0185   6.8021e-01
+Gender                  -0.0233   6.0335e-01
+BloodPressure            0.0931   3.7403e-02
+Cholesterol             -0.0182   6.8550e-01
+HeartRate                0.0394   3.7971e-01
+QuantumPatternFeature    -0.0663   1.3893e-01
+HeartDisease            -0.0193   6.6651e-01
+
+
+================ COMPROBACIÓN DE DUPLICADOS =================
+
+Comprobación de duplicados exactos en datos sintéticos:
+TVAE - Duplicados: 0, Ratio: 0.00%
+KAN  - Duplicados: 0, Ratio: 0.00%
+
+================ RELACIONES ENTRE VARIABLES =================
+
+Evaluación de preservación de relaciones entre variables (Modelado supervisado multivariable):
+
+Variable objetivo: Age
+TVAE → Real  - MAE: 0.2501
+KAN  → Real  - MAE: 0.2397
+
+Variable objetivo: Gender
+TVAE → Real  - MAE: 0.4813
+KAN  → Real  - MAE: 0.4875
+
+Variable objetivo: BloodPressure
+TVAE → Real  - MAE: 0.3347
+KAN  → Real  - MAE: 0.2621
+
+Variable objetivo: Cholesterol
+TVAE → Real  - MAE: 0.2823
+KAN  → Real  - MAE: 0.2272
+
+Variable objetivo: HeartRate
+TVAE → Real  - MAE: 0.3179
+KAN  → Real  - MAE: 0.2584
+
+Variable objetivo: QuantumPatternFeature
+TVAE → Real  - MAE: 0.1698
+KAN  → Real  - MAE: 0.1094
+
+================ TSTR / TRTS =================
+
+Evaluación TSTR/TRTS con múltiples modelos y métricas:
+
+=== RandomForest ===
+TSTR_TVAE: accuracy=0.6940, f1=0.7446, precision=0.7458, recall=0.7433, roc_auc=0.7997
+TSTR_KAN: accuracy=0.9220, f1=0.9351, precision=0.9336, recall=0.9367, roc_auc=0.9444
+TRTS_TVAE: accuracy=0.8430, f1=0.8662, precision=0.8819, recall=0.8509, roc_auc=0.9226
+TRTS_KAN: accuracy=0.9225, f1=0.9388, precision=0.9690, recall=0.9104, roc_auc=0.9825
+
+=== GradientBoosting ===
+TSTR_TVAE: accuracy=0.6740, f1=0.7341, precision=0.7188, recall=0.7500, roc_auc=0.7831
+TSTR_KAN: accuracy=0.9120, f1=0.9272, precision=0.9211, recall=0.9333, roc_auc=0.9507
+TRTS_TVAE: accuracy=0.8325, f1=0.8568, precision=0.8751, recall=0.8392, roc_auc=0.9090
+TRTS_KAN: accuracy=0.8970, f1=0.9215, precision=0.9173, recall=0.9257, roc_auc=0.9715
+
+=== LogisticRegression ===
+TSTR_TVAE: accuracy=0.7260, f1=0.7658, precision=0.7860, recall=0.7467, roc_auc=0.7826
+TSTR_KAN: accuracy=0.7760, f1=0.8205, precision=0.7901, recall=0.8533, roc_auc=0.8729
+TRTS_TVAE: accuracy=0.8520, f1=0.8736, precision=0.8911, recall=0.8568, roc_auc=0.9461
+TRTS_KAN: accuracy=0.9270, f1=0.9464, precision=0.9096, recall=0.9862, roc_auc=0.9804
+
+
+================ COMPARACIÓN DE IMPORTANCIA DE VARIABLES =================
+
+Comparación de Importancia de Variables (Random Forest):
+                Variable      Real      TVAE       KAN
+0                    Age  0.111167  0.105389  0.100432
+1                 Gender  0.009663  0.007233  0.006897
+2          BloodPressure  0.056589  0.060152  0.068199
+3            Cholesterol  0.137576  0.274773  0.276346
+4              HeartRate  0.055150  0.399151  0.058012
+5  QuantumPatternFeature  0.629855  0.153302  0.490114
+
+================ DISTANCIA MMD =================
+
+**Distancia MMD (Maximum Mean Discrepancy) con kernel RBF**
+TVAE - MMD: 0.0755
+KAN  - MMD: 0.0684

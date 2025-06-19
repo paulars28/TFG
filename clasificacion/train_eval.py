@@ -132,70 +132,100 @@ def evaluate_model(test_loader, model, device, model_name):
 
 
 def plot_eval_curves(all_labels, all_probs, model_name):
+
+    # Curva ROC
     fpr, tpr, _ = roc_curve(all_labels, all_probs)
     roc_auc = roc_auc_score(all_labels, all_probs)
+
     plt.figure()
-    plt.plot(fpr, tpr, label=f"ROC Curve (AUC = {roc_auc:.4f})")
-    plt.plot([0, 1], [0, 1], linestyle='--', color='grey')
-    plt.xlabel("False Positive Rate")
-    plt.ylabel("True Positive Rate")
-    plt.title("ROC Curve")
-    plt.legend()
-    plt.grid(True)
+    plt.plot(fpr, tpr, label=f"Curva ROC (AUC = {roc_auc:.4f})", linewidth=2)
+    plt.plot([0, 1], [0, 1], linestyle='--', color='grey', linewidth=1)
+    plt.xlabel("Tasa de Falsos Positivos", fontsize=12)
+    plt.ylabel("Tasa de Verdaderos Positivos", fontsize=12)
+    plt.title("Curva ROC", fontsize=14)
+    plt.legend(loc="lower right", fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.savefig(model_name + "_roc_curve.png")
+    plt.savefig(model_name + "_curva_ROC.png", dpi=300)
     plt.close()
 
+    # Curva Precisión-Recall
     prec, rec, _ = precision_recall_curve(all_labels, all_probs)
     pr_auc = average_precision_score(all_labels, all_probs)
+
     plt.figure()
-    plt.plot(rec, prec, label=f"PR Curve (AUC = {pr_auc:.4f})")
-    plt.xlabel("Recall")
-    plt.ylabel("Precision")
-    plt.title("Precision-Recall Curve")
-    plt.legend()
-    plt.grid(True)
+    plt.plot(rec, prec, label=f"Curva Precisión-Recall (AUC = {pr_auc:.4f})", linewidth=2)
+    plt.xlabel("Recall (Sensibilidad)", fontsize=12)
+    plt.ylabel("Precisión", fontsize=12)
+    plt.title("Curva Precisión-Recall", fontsize=14)
+    plt.legend(loc="upper right", fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.savefig(model_name + "_pr_curve.png")
+    plt.savefig(model_name + "_curva_PR.png", dpi=300)
     plt.close()
 
 
-def plot_loss_acc(train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist):
-    # Graficar loss y accuracy
+
+COLORES_MODELO = {
+    "KAN": "#E07B39",  # Naranja pastel oscuro
+    "MLP": "#6BAED6"   # Azul pastel oscuro
+}
+
+def plot_loss_acc(train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist, model_name):
+
+    color = COLORES_MODELO.get(model_name, "gray")
+
     plt.figure(figsize=(10, 4))
+    plt.title(f"Curvas de pérdida y precisión – {model_name}", fontsize=16)
 
+    # Subgráfico: Pérdida
     plt.subplot(1, 2, 1)
-    plt.plot(train_loss_hist, label='Training Loss', color='blue')
-    plt.plot(test_loss_hist, label='Test Loss', color= 'orange')
-    plt.title('Training/Test Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.grid(True)
-    plt.legend()
+    plt.plot(train_loss_hist, label='Pérdida en entrenamiento', color=color, linewidth=0.75, linestyle='-')
+    plt.plot(test_loss_hist, label='Pérdida en validación', color=color, linewidth=0.75, linestyle='--')
+    plt.title('Evolución de la pérdida', fontsize=14)
+    plt.xlabel('Época', fontsize=12)
+    plt.ylabel('Pérdida', fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.legend(fontsize=10)
 
+    # Subgráfico: Precisión
     plt.subplot(1, 2, 2)
-    plt.plot(train_acc_hist, label='Training Accuracy', color='blue')
-    plt.plot(test_acc_hist, label='Test Accuracy', color= 'orange')
-    plt.title('Training/Test Accuracy')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.grid(True)
-    plt.legend()
+    plt.plot(train_acc_hist, label='Precisión en entrenamiento', color=color, linewidth=0.75, linestyle='-')
+    plt.plot(test_acc_hist, label='Precisión en validación', color=color, linewidth=0.75, linestyle='--')
+    plt.title('Evolución de la precisión', fontsize=14)
+    plt.xlabel('Época', fontsize=12)
+    plt.ylabel('Precisión', fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.legend(fontsize=10)
 
     plt.tight_layout()
+    plt.savefig(f"{model_name}_pérdida_precisión.png", dpi=300)
     plt.show()
-    
+
+
 def plot_confusion_matrix_heatmap(all_labels, all_preds, model_name, save=True):
+
+    # Calcular la matriz de confusión
     cm = confusion_matrix(all_labels, all_preds)
-    plt.figure(figsize=(5, 4))
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
-    plt.xlabel("Predicción")
-    plt.ylabel("Real")
-    plt.title(f"Matriz de confusión - {model_name}")
+
+    # Crear el mapa de calor
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False,
+                annot_kws={"size": 12})
+    
+    # Etiquetas y título en castellano técnico
+    plt.xlabel("Etiqueta predicha", fontsize=12)
+    plt.ylabel("Etiqueta real", fontsize=12)
+    plt.title(f"Matriz de confusión – {model_name}", fontsize=14)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
     plt.tight_layout()
+
+    # Guardar si se solicita
     if save:
-        plt.savefig(f"{model_name}_confusion_matrix.png")
+        plt.savefig(f"{model_name}_matriz_confusion.png", dpi=300)
     plt.close()
+
 
 #funcion para guardar arrays durante la evaluacion y despues usarlos en compare.py
 def save_eval_arrays(model_name, all_labels, all_probs, output_dir="./eval_arrays"):

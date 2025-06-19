@@ -1,0 +1,95 @@
+Arquitectura: 16-8
+
+================ P-values for Student's t-test: =================
+
+=== TVAE vs REAL ===
+Column Age: p-value = 0.3465
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.3463
+Column QuantumPatternFeature: p-value = 0.1549
+
+=== KAN vs REAL ===
+Column Age: p-value = 0.0000
+Column BloodPressure: p-value = 0.0938
+Column HeartRate: p-value = 0.5847
+Column QuantumPatternFeature: p-value = 0.2441
+
+================ P-values for Mann-Whitney U test: =================
+
+=== TVAE vs REAL ===
+Column Age: p-value = 0.3034
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.3631
+Column QuantumPatternFeature: p-value = 0.0969
+
+=== KAN vs REAL ===
+Column Age: p-value = 0.0000
+Column BloodPressure: p-value = 0.1846
+Column HeartRate: p-value = 0.7118
+Column QuantumPatternFeature: p-value = 0.1900
+
+================ P-values for Kolmogorov-Smirnov test: =================
+
+=== TVAE vs REAL ===
+Column Age: p-value = 0.0290
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.0002
+Column QuantumPatternFeature: p-value = 0.0587
+
+=== KAN vs REAL ===
+Column Age: p-value = 0.0000
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.0000
+Column QuantumPatternFeature: p-value = 0.0000
+
+================ P-values for Chi-squared test: =================
+
+=== TVAE vs REAL ===
+Column HeartDisease: p-value = 0.5668
+Column Gender: p-value = 0.1277
+
+=== KAN vs REAL ===
+Column HeartDisease: p-value = 1.0000
+Column Gender: p-value = 0.9433
+
+================ Cosine distances: =================
+
+=== TVAE vs REAL ===
+Column Age: Cosine distance = 0.2668
+Column BloodPressure: Cosine distance = 0.3964
+Column HeartRate: Cosine distance = 0.3033
+Column QuantumPatternFeature: Cosine distance = 0.1824
+
+=== KAN vs REAL ===
+Column Age: Cosine distance = 0.1965
+Column BloodPressure: Cosine distance = 0.2239
+Column HeartRate: Cosine distance = 0.1895
+Column QuantumPatternFeature: Cosine distance = 0.1066
+
+================ Jensen-Shannon distances: =================
+
+=== TVAE vs REAL ===
+Column Age: Jensen-Shannon distance = 0.2355
+Column BloodPressure: Jensen-Shannon distance = 0.3145
+Column HeartRate: Jensen-Shannon distance = 0.2597
+Column QuantumPatternFeature: Jensen-Shannon distance = 0.1712
+
+=== KAN vs REAL ===
+Column Age: Jensen-Shannon distance = 0.5181
+Column BloodPressure: Jensen-Shannon distance = 0.4630
+Column HeartRate: Jensen-Shannon distance = 0.4404
+Column QuantumPatternFeature: Jensen-Shannon distance = 0.3755
+
+================ Wasserstein distances: =================
+
+=== TVAE vs REAL ===
+Column Age: Wasserstein distance = 0.0480
+Column BloodPressure: Wasserstein distance = 0.1789
+Column HeartRate: Wasserstein distance = 0.0627
+Column QuantumPatternFeature: Wasserstein distance = 0.0321
+
+=== KAN vs REAL ===
+Column Age: Wasserstein distance = 0.1610
+Column BloodPressure: Wasserstein distance = 0.0809
+Column HeartRate: Wasserstein distance = 0.0999
+Column QuantumPatternFeature: Wasserstein distance = 0.0560

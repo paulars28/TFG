@@ -9,22 +9,22 @@ sys.path.insert(0, root_dir)
 
 from kan.MultKAN import MultKAN  
 
-
-estructura = "decoder"
-modelo_path = "./MODELOS/final_decoder_stateDIABETES"
-modelo_cache = "./MODELOS/final_decoder_cache_dataDIABETES"
+arquitectura = "10-5"
+estructura = "decoder" #encoder/decoder
+modelo_path = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_stateHeartDisease"
+modelo_cache = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_cache_dataHeartDisease"
+device= 'cuda'
 device= 'cuda'
 
 folder = "./symbolic_result"
 
-data_dim = 9 
-compress_dims = [5, 5] 
-embedding_dim = 5  
+data_dim = 9
+compress_dims = [10, 5] 
+embedding_dim = 5
 
 
-
-from ctgan.synthesizers.tvae import Decoder 
-from ctgan.synthesizers.tvae import Encoder
+from synthesizers.tvae import Decoder 
+from synthesizers.tvae import Encoder
 if estructura == "decoder":
     modelo = Decoder(embedding_dim, compress_dims, data_dim).to('cuda') 
     multkan = modelo.multkan_decoder
@@ -111,7 +111,7 @@ try:
         modelo.multkan_encoder.auto_symbolic()
         symbolic_formula = modelo.multkan_encoder.symbolic_formula()
 
-    with open("symbolic_formula.txt", "w") as f:
+    with open("symbolic_formula_" + estructura + ".txt", "w") as f:
         f.write(estructura + " SYMBOLIC FORMULA:\n")
         f.write("\n".join([str(eq) for eq in symbolic_formula]))
     print("Fórmula simbólica final guardada en symbolic_formula.txt")

@@ -1,0 +1,10 @@
+Variables transformadas:
+x_1 -> Age
+x_2 -> Gender_0
+x_3 -> Gender_1
+x_4 -> BloodPressure
+x_5 -> Cholesterol
+x_6 -> HeartRate
+x_7 -> QuantumPatternFeature
+x_8 -> HeartDisease_0
+x_9 -> HeartDisease_1

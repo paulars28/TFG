@@ -10,20 +10,26 @@ sys.path.insert(0, root_dir)
 from kan.MultKAN import MultKAN  
 
 figures_folder = "./plot"
-folder = "./symbolic_resultDIABETES"
+
 
 estructura = "decoder"
-modelo_path = "./MODELOS/final_decoder_stateDIABETES"
-modelo_cache = "./MODELOS/final_decoder_cache_dataDIABETES"
+arquitectura = "32-16" 
+#modelo_path = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/resultado_poda_node/32-16-0.10/"+estructura+"_prunednode_state"
+#modelo_cache = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/resultado_poda_node/32-16-0.10/"+estructura+"_prunednode_cache_data"
+#modelo_path = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_stateHeartDisease"
+#modelo_cache = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_cache_dataHeartDisease"
+modelo_path = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/MODELOS/final_"+estructura+"_stateHeartDisease"
+modelo_cache = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/MODELOS/final_"+estructura+"_cache_dataHeartDisease"
 device= 'cuda'
 
-data_dim = 9 
-compress_dims = [5, 5] 
-embedding_dim = 5  
+
+data_dim =9
+compress_dims = [16, 8] 
+embedding_dim = 8
 
 
-from ctgan.synthesizers.tvae import Decoder 
-from ctgan.synthesizers.tvae import Encoder
+from synthesizers.tvae import Decoder 
+from synthesizers.tvae import Encoder
 if estructura == "decoder":
     modelo = Decoder(embedding_dim, compress_dims, data_dim).to('cuda') 
     multkan = modelo.multkan_decoder
@@ -104,8 +110,8 @@ net.attribute()
 import matplotlib.pyplot as plt
 
 print("Generando imágenes finales del modelo...")
-modelo.multkan_decoder.plot(folder=figures_folder)
+multkan.plot(folder=figures_folder)
 name = estructura + "_plot.png"
 plt.savefig(os.path.join(figures_folder, name), dpi=300, bbox_inches='tight')
 
-print(f"Plot final guardado cobn éxito en {figures_folder}")
+print(f"Plot final guardado con éxito en {figures_folder}")

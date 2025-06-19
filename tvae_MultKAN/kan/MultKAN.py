@@ -93,10 +93,9 @@ class MultKAN(nn.Module):
             the number of times rewind() has been called
         device : str
     '''
-    def __init__(self, width=None, grid=3, k=3, mult_arity = 2, noise_scale=0.3, scale_base_mu=0.0, scale_base_sigma=1.0, base_fun='silu', symbolic_enabled=True, affine_trainable=False, grid_eps=0.02, grid_range=[-1, 1], sp_trainable=True, sb_trainable=True, seed=1, save_act=True, sparse_init=False, auto_save=True, first_init=True, ckpt_path='./model', state_id=0, round=0, device='cuda'):
+    def __init__(self, width=None, grid=8, k=3, mult_arity = 2, noise_scale=0.3, scale_base_mu=0.0, scale_base_sigma=1.0, base_fun='silu', symbolic_enabled=True, affine_trainable=False, grid_eps=0.02, grid_range=[-1, 1], sp_trainable=True, sb_trainable=True, seed=1, save_act=True, sparse_init=False, auto_save=True, first_init=True, ckpt_path='./model', state_id=0, round=0, device='cuda'):
+    #def __init__(self, width=None, grid=20, k=2, mult_arity = 2, noise_scale=0.3, scale_base_mu=0.0, scale_base_sigma=1.0, base_fun='silu', symbolic_enabled=True, affine_trainable=False, grid_eps=0.05, grid_range=[-1, 1], sp_trainable=True, sb_trainable=True, seed=1, save_act=True, sparse_init=False, auto_save=True, first_init=True, ckpt_path='./model', state_id=0, round=0, device='cuda'):            
         '''
-        initalize a KAN model
-        
         Args:
         -----
             width : list of int
@@ -1612,7 +1611,7 @@ class MultKAN(nn.Module):
         self.symbolic_enabled = old_symbolic_enabled
         return results
 
-    def prune_node(self, threshold=1e-2, mode="auto", active_neurons_id=None, log_history=True):
+    def prune_node(self, threshold=5e-2, mode="auto", active_neurons_id=None, log_history=True):
         '''
         pruning nodes
 

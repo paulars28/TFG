@@ -8,22 +8,14 @@ from torch.nn.functional import cross_entropy
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 from data_transformer import DataTransformer
 from synthesizers.base import BaseSynthesizer, random_state
 
 
 class Encoder(Module):
-    """Encoder for the TVAE.
-
-    Args:
-        data_dim (int):
-            Dimensions of the data.
-        compress_dims (tuple or list of ints):
-            Size of each hidden layer.
-        embedding_dim (int):
-            Size of the output vector.
-    """
+    """Encoder for the TVAE. """
 
     def __init__(self, data_dim, compress_dims, embedding_dim):
         super(Encoder, self).__init__()
@@ -47,16 +39,7 @@ class Encoder(Module):
 
 
 class Decoder(Module):
-    """Decoder for the TVAE.
-
-    Args:
-        embedding_dim (int):
-            Size of the input vector.
-        decompress_dims (tuple or list of ints):
-            Size of each hidden layer.
-        data_dim (int):
-            Dimensions of the data.
-    """
+    """Decoder for the TVAE."""
 
     def __init__(self, embedding_dim, decompress_dims, data_dim):
         super(Decoder, self).__init__()
@@ -140,7 +123,6 @@ class TVAE(BaseSynthesizer):
 
     @random_state
     def fit_tvae(self, train_data, discrete_columns=()):
-        print("entra aqui???", flush=True)
         """Fit the TVAE Synthesizer models to the training data."""
 
         print("Initializing data transformer...", flush=True)
@@ -158,6 +140,8 @@ class TVAE(BaseSynthesizer):
         )
 
         print(f"Training started for {self.epochs} epochs with batch size {self.batch_size}...", flush=True)
+        self.training_metrics = []  
+
 
         for epoch in range(self.epochs):
             epoch_loss = 0
@@ -191,6 +175,15 @@ class TVAE(BaseSynthesizer):
 
                 # Print batch progress
                 #print(f"  Batch {batch_id + 1}/{len(loader)} - Loss: {batch_loss:.4f}", flush=True)
+            epoch_recon_loss = loss_1.detach().cpu().item()
+            epoch_kl_loss = loss_2.detach().cpu().item()
+
+            self.training_metrics.append({
+                "epoch": epoch + 1,
+                "total_loss": epoch_loss / len(loader),
+                "recon_loss": epoch_recon_loss,
+                "kl_loss": epoch_kl_loss,
+            })
 
             # Save epoch loss to DataFrame
             epoch_loss_avg = epoch_loss / len(loader)
@@ -202,71 +195,24 @@ class TVAE(BaseSynthesizer):
             # Print epoch summary
             print(f"Epoch {epoch + 1} completed. Average Loss: {epoch_loss_avg:.4f}\n", flush=True)
 
+            metrics_df = pd.DataFrame(self.training_metrics)
+            metrics_df.to_csv("tvae_training_metrics.csv", index=False)
+
+            plt.figure(figsize=(10, 6))
+            plt.plot(metrics_df["epoch"], metrics_df["total_loss"], label="Total Loss")
+            plt.plot(metrics_df["epoch"], metrics_df["recon_loss"], label="Reconstruction Loss")
+            plt.plot(metrics_df["epoch"], metrics_df["kl_loss"], label="KL Loss")
+            plt.xlabel("Epoch")
+            plt.ylabel("Loss Value")
+            plt.title("TVAE Training Metrics")
+            plt.legend()
+            plt.grid(True)
+            plt.tight_layout()
+            plt.savefig("tvae_training_metrics.png")  # también puedes guardar como PDF
+            plt.close()
+
+
         print("Training completed.", flush=True)
-
-        '''
-        self.transformer = DataTransformer()
-        self.transformer.fit(train_data, discrete_columns)
-        train_data = self.transformer.transform(train_data)
-        dataset = TensorDataset(torch.from_numpy(train_data.astype('float32')).to(self._device))
-        loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True, drop_last=False)
-
-        data_dim = self.transformer.output_dimensions
-        encoder = Encoder(data_dim, self.compress_dims, self.embedding_dim).to(self._device)
-        self.decoder = Decoder(self.embedding_dim, self.decompress_dims, data_dim).to(self._device)
-        optimizerAE = Adam(
-            list(encoder.parameters()) + list(self.decoder.parameters()), weight_decay=self.l2scale
-        )
-
-        self.loss_values = pd.DataFrame(columns=['Epoch', 'Batch', 'Loss'])
-        iterator = tqdm(range(self.epochs), disable=(not self.verbose))
-        if self.verbose:
-            iterator_description = 'Loss: {loss:.3f}'
-            iterator.set_description(iterator_description.format(loss=0))
-
-        for i in iterator:
-            loss_values = []
-            batch = []
-            for id_, data in enumerate(loader):
-                optimizerAE.zero_grad()
-                real = data[0].to(self._device)
-                mu, std, logvar = encoder(real)
-                eps = torch.randn_like(std)
-                emb = eps * std + mu
-                rec, sigmas = self.decoder(emb)
-                loss_1, loss_2 = _loss_function(
-                    rec,
-                    real,
-                    sigmas,
-                    mu,
-                    logvar,
-                    self.transformer.output_info_list,
-                    self.loss_factor,
-                )
-                loss = loss_1 + loss_2
-                loss.backward()
-                optimizerAE.step()
-                self.decoder.sigma.data.clamp_(0.01, 1.0)
-
-                batch.append(id_)
-                loss_values.append(loss.detach().cpu().item())
-
-            epoch_loss_df = pd.DataFrame({
-                'Epoch': [i] * len(batch),
-                'Batch': batch,
-                'Loss': loss_values,
-            })
-            if not self.loss_values.empty:
-                self.loss_values = pd.concat([self.loss_values, epoch_loss_df]).reset_index(
-                    drop=True
-                )
-            else:
-                self.loss_values = epoch_loss_df
-
-            if self.verbose:
-                iterator.set_description(
-                    iterator_description.format(loss=loss.detach().cpu().item())
-                )'''
 
 
     @random_state

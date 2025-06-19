@@ -1,0 +1,95 @@
+Arquitectura: 24-12
+
+================ P-values for Student's t-test: =================
+
+=== ctgan vs REAL ===
+Column Age: p-value = 0.0288
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.2556
+Column QuantumPatternFeature: p-value = 0.0081
+
+=== KAN vs REAL ===
+Column Age: p-value = 0.0171
+Column BloodPressure: p-value = 0.0555
+Column HeartRate: p-value = 0.9950
+Column QuantumPatternFeature: p-value = 0.5723
+
+================ P-values for Mann-Whitney U test: =================
+
+=== ctgan vs REAL ===
+Column Age: p-value = 0.0443
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.2781
+Column QuantumPatternFeature: p-value = 0.0024
+
+=== KAN vs REAL ===
+Column Age: p-value = 0.0202
+Column BloodPressure: p-value = 0.0563
+Column HeartRate: p-value = 0.8861
+Column QuantumPatternFeature: p-value = 0.9985
+
+================ P-values for Kolmogorov-Smirnov test: =================
+
+=== ctgan vs REAL ===
+Column Age: p-value = 0.0072
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.0348
+Column QuantumPatternFeature: p-value = 0.0009
+
+=== KAN vs REAL ===
+Column Age: p-value = 0.0000
+Column BloodPressure: p-value = 0.0000
+Column HeartRate: p-value = 0.0000
+Column QuantumPatternFeature: p-value = 0.0000
+
+================ P-values for Chi-squared test: =================
+
+=== ctgan vs REAL ===
+Column HeartDisease: p-value = 0.5346
+Column Gender: p-value = 0.7934
+
+=== KAN vs REAL ===
+Column HeartDisease: p-value = 0.5632
+Column Gender: p-value = 0.8336
+
+================ Cosine distances: =================
+
+=== ctgan vs REAL ===
+Column Age: Cosine distance = 0.2847
+Column BloodPressure: Cosine distance = 0.4904
+Column HeartRate: Cosine distance = 0.2971
+Column QuantumPatternFeature: Cosine distance = 0.2031
+
+=== KAN vs REAL ===
+Column Age: Cosine distance = 0.2321
+Column BloodPressure: Cosine distance = 0.2115
+Column HeartRate: Cosine distance = 0.2180
+Column QuantumPatternFeature: Cosine distance = 0.1133
+
+================ Jensen-Shannon distances: =================
+
+=== ctgan vs REAL ===
+Column Age: Jensen-Shannon distance = 0.2519
+Column BloodPressure: Jensen-Shannon distance = 0.3451
+Column HeartRate: Jensen-Shannon distance = 0.2423
+Column QuantumPatternFeature: Jensen-Shannon distance = 0.1818
+
+=== KAN vs REAL ===
+Column Age: Jensen-Shannon distance = 0.6480
+Column BloodPressure: Jensen-Shannon distance = 0.6320
+Column HeartRate: Jensen-Shannon distance = 0.6839
+Column QuantumPatternFeature: Jensen-Shannon distance = 0.5263
+
+================ Wasserstein distances: =================
+
+=== ctgan vs REAL ===
+Column Age: Wasserstein distance = 0.0523
+Column BloodPressure: Wasserstein distance = 0.2158
+Column HeartRate: Wasserstein distance = 0.0414
+Column QuantumPatternFeature: Wasserstein distance = 0.0488
+
+=== KAN vs REAL ===
+Column Age: Wasserstein distance = 0.1024
+Column BloodPressure: Wasserstein distance = 0.1113
+Column HeartRate: Wasserstein distance = 0.1130
+Column QuantumPatternFeature: Wasserstein distance = 0.0726

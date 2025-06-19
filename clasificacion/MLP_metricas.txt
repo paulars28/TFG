@@ -1,0 +1,24 @@
+Evaluation Metrics for model: MLP
+
+Accuracy:           0.7700
+Precision:          0.7761
+Recall:             0.8667
+F1 Score:           0.8189
+ROC AUC:            0.8412
+PR AUC:             0.8913
+Matthews CorrCoef:  0.5123
+
+Confusion Matrix:
+[[25 15]
+ [ 8 52]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0     0.7576    0.6250    0.6849        40
+         1.0     0.7761    0.8667    0.8189        60
+
+    accuracy                         0.7700       100
+   macro avg     0.7668    0.7458    0.7519       100
+weighted avg     0.7687    0.7700    0.7653       100
+

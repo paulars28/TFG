@@ -1,0 +1,6 @@
+índice,profundidad,altura_arbol,n_subexpresiones,funciones_no_lineales
+1,29,9,46,['cos']
+2,55,9,87,['cos']
+3,61,9,98,['cos']
+4,54,9,86,['cos']
+5,37,9,60,['cos']

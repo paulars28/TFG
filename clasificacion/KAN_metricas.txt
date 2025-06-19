@@ -1,0 +1,24 @@
+Evaluation Metrics for model: KAN
+
+Accuracy:           0.8300
+Precision:          0.8209
+Recall:             0.9167
+F1 Score:           0.8661
+ROC AUC:            0.8842
+PR AUC:             0.9218
+Matthews CorrCoef:  0.6425
+
+Confusion Matrix:
+[[28 12]
+ [ 5 55]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0     0.8485    0.7000    0.7671        40
+         1.0     0.8209    0.9167    0.8661        60
+
+    accuracy                         0.8300       100
+   macro avg     0.8347    0.8083    0.8166       100
+weighted avg     0.8319    0.8300    0.8265       100
+

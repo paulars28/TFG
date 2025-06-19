@@ -1,0 +1,133 @@
+Columnas del dataset real:
+Index(['Age', 'Gender', 'BloodPressure', 'Cholesterol', 'HeartRate',
+       'QuantumPatternFeature', 'HeartDisease'],
+      dtype='object')
+
+================ COMPARACIÓN ESTADÍSTICA =================
+
+Comparación Estadística:
+                       Real Mean  ctgan Mean  KAN Mean  Real Std  ctgan Std   KAN Std
+Age                     0.507429    0.324541  0.492878  0.292143   0.305988  0.226255
+Gender                  0.468000    0.533000  0.525500  0.499475   0.499035  0.499474
+BloodPressure           0.481730    0.572506  0.524978  0.296837   0.377179  0.219097
+Cholesterol             0.479866    0.345782  0.478366  0.294387   0.329702  0.216959
+HeartRate               0.487559    0.545568  0.503373  0.295208   0.311288  0.220186
+QuantumPatternFeature   0.465936    0.316988  0.469839  0.199046   0.226943  0.127662
+HeartDisease            0.600000    0.534500  0.477500  0.490389   0.498933  0.499618
+
+================ EFICACIA EN MODELOS DE ML =================
+
+Evaluación de Modelos de Machine Learning:
+RandomForest entrenado en ctgan - Accuracy: 0.4200, F1: 0.4173
+RandomForest entrenado en KAN - Accuracy: 0.5600, F1: 0.5643
+GradientBoosting entrenado en ctgan - Accuracy: 0.4400, F1: 0.4448
+GradientBoosting entrenado en KAN - Accuracy: 0.5000, F1: 0.5049
+
+================ LIKELIHOOD FITNESS =================
+
+**Métrica de Ajuste de Verosimilitud (Likelihood Fitness) usando GMM con tamaños igualados**
+ctgan - Lsyn: 4.8688, Ltest: 9.1012
+KAN  - Lsyn: 10.0860, Ltest: 8.9612
+
+================ TSTR / TRTS =================
+
+Evaluación TSTR/TRTS con múltiples modelos y métricas:
+
+=== RandomForest ===
+TSTR_ctgan: accuracy=0.4700, f1=0.5501, precision=0.5606, recall=0.5400, roc_auc=0.4493
+TSTR_KAN: accuracy=0.4160, f1=0.4183, precision=0.5198, recall=0.3500, roc_auc=0.4143
+TRTS_ctgan: accuracy=0.4995, f1=0.6294, precision=0.5208, recall=0.7951, roc_auc=0.4659
+TRTS_KAN: accuracy=0.4890, f1=0.5346, precision=0.4730, recall=0.6147, roc_auc=0.5019
+
+=== GradientBoosting ===
+TSTR_ctgan: accuracy=0.4640, f1=0.5363, precision=0.5576, recall=0.5167, roc_auc=0.4663
+TSTR_KAN: accuracy=0.4800, f1=0.4942, precision=0.5935, recall=0.4233, roc_auc=0.5110
+TRTS_ctgan: accuracy=0.4945, f1=0.6273, precision=0.5176, recall=0.7961, roc_auc=0.4516
+TRTS_KAN: accuracy=0.4885, f1=0.5284, precision=0.4720, recall=0.6000, roc_auc=0.4985
+
+=== LogisticRegression ===
+TSTR_ctgan: accuracy=0.4820, f1=0.5350, precision=0.5798, recall=0.4967, roc_auc=0.4617
+TSTR_KAN: accuracy=0.5440, f1=0.4795, precision=0.7609, recall=0.3500, roc_auc=0.6359
+TRTS_ctgan: accuracy=0.5065, f1=0.6357, precision=0.5250, recall=0.8054, roc_auc=0.4680
+TRTS_KAN: accuracy=0.4960, f1=0.5567, precision=0.4799, recall=0.6628, roc_auc=0.5038
+
+================ CORRELACIÓN (MAE & SPEARMAN) =================
+
+Métricas de correlación y correlación de Spearman:
+
+=== ctgan ===
+MAE de la matriz de correlación (Pearson): 0.1580
+Variables con correlación de Spearman significativa (p < 0.05): 1 / 7
+Variable                   Coef      p-valor
+---------------------------------------------
+Age                      0.0775   8.3301e-02
+Gender                   0.0459   3.0564e-01
+BloodPressure            0.0974   2.9425e-02
+Cholesterol              0.0796   7.5410e-02
+HeartRate               -0.0279   5.3409e-01
+QuantumPatternFeature    -0.0511   2.5443e-01
+HeartDisease            -0.0147   7.4302e-01
+
+=== KAN ===
+MAE de la matriz de correlación (Pearson): 0.1275
+Variables con correlación de Spearman significativa (p < 0.05): 0 / 7
+Variable                   Coef      p-valor
+---------------------------------------------
+Age                     -0.0407   3.6380e-01
+Gender                  -0.0087   8.4611e-01
+BloodPressure            0.0266   5.5292e-01
+Cholesterol              0.0242   5.8946e-01
+HeartRate                0.0087   8.4546e-01
+QuantumPatternFeature    -0.0120   7.8899e-01
+HeartDisease             0.0327   4.6585e-01
+
+================ COMPROBACIÓN DE DUPLICADOS =================
+
+Comprobación de duplicados exactos en datos sintéticos:
+ctgan - Duplicados: 0, Ratio: 0.00%
+KAN  - Duplicados: 0, Ratio: 0.00%
+
+================ RELACIONES ENTRE VARIABLES =================
+
+Evaluación de preservación de relaciones entre variables (Modelado supervisado multivariable):
+
+Variable objetivo: Age
+ctgan → Real  - MAE: 0.3010
+KAN  → Real  - MAE: 0.2493
+
+Variable objetivo: Gender
+ctgan → Real  - MAE: 0.5056
+KAN  → Real  - MAE: 0.5020
+
+Variable objetivo: BloodPressure
+ctgan → Real  - MAE: 0.2880
+KAN  → Real  - MAE: 0.2775
+
+Variable objetivo: Cholesterol
+ctgan → Real  - MAE: 0.2731
+KAN  → Real  - MAE: 0.2515
+
+Variable objetivo: HeartRate
+ctgan → Real  - MAE: 0.2706
+KAN  → Real  - MAE: 0.2604
+
+Variable objetivo: QuantumPatternFeature
+ctgan → Real  - MAE: 0.2104
+KAN  → Real  - MAE: 0.1622
+
+================ COMPARACIÓN DE IMPORTANCIA DE VARIABLES =================
+
+Comparación de Importancia de Variables (Random Forest):
+                Variable      Real     ctgan       KAN
+0                    Age  0.111167  0.160290  0.119186
+1                 Gender  0.009663  0.087445  0.038947
+2          BloodPressure  0.056589  0.197486  0.182661
+3            Cholesterol  0.137576  0.181832  0.194591
+4              HeartRate  0.055150  0.165610  0.155424
+5  QuantumPatternFeature  0.629855  0.207337  0.309191
+
+================ DISTANCIA MMD =================
+
+**Distancia MMD (Maximum Mean Discrepancy) con kernel RBF**
+ctgan - MMD: 0.0560
+KAN  - MMD: 0.0294

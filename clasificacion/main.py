@@ -19,9 +19,9 @@ train_loader, test_loader = get_dataset_train_val(batch_size)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if cfg["select_model"] == "mlp":
-    model = DiabetesMLP().to(device)
+    model = hdMLP().to(device)
 elif cfg["select_model"] == "kan":
-    model = DiabetesKAN().to(device)
+    model = hdKAN().to(device)
 
 optimizer = optim.Adam(model.parameters(), lr=cfg["learning_rate"])
 criterion = nn.BCELoss()
@@ -30,7 +30,7 @@ model_name = cfg["model_name"]
 
 train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist = train_eval_loop(train_loader, test_loader, model, epochs, optimizer, criterion, device, cfg["model_name"])
 evaluate_model(test_loader, model, device, model_name)
-plot_loss_acc(train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist)
+plot_loss_acc(train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist, model_name)
 
 
 

@@ -1,0 +1,3 @@
+Distancia MMD (Maximum Mean Discrepancy)
+TVAE - MMD: 0.040498
+KAN  - MMD: 0.047308

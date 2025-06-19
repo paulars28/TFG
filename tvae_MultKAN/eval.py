@@ -15,6 +15,11 @@ from sklearn.manifold import TSNE
 import sys
 from scipy.stats import entropy, ks_2samp, spearmanr
 from scipy.linalg import sqrtm
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.metrics import mean_absolute_error, accuracy_score
+from sklearn.metrics.pairwise import rbf_kernel
+
+target = "HeartDisease"  
 
 
 # Clase para redirigir stdout a la consola y a un archivo
@@ -35,6 +40,7 @@ class DualOutput:
 class SyntheticDataEvaluator:
     def __init__(self, real_data_path, tvae_data_path, kan_data_path, categorical_columns):
         self.real_data = pd.read_csv(real_data_path)
+        self.real_data= self.real_data.dropna()
         self.tvae_data = pd.read_csv(tvae_data_path)
         self.kan_data = pd.read_csv(kan_data_path)
         self.categorical_columns = categorical_columns
@@ -122,25 +128,46 @@ class SyntheticDataEvaluator:
             print(f"{col} - TVAE: KS={ks_stat_tvae:.4f}, p={p_value_tvae:.4f}; KAN: KS={ks_stat_kan:.4f}, p={p_value_kan:.4f}")
 
     def compute_likelihood_fitness(self, n_components=5):
-        print("\n**Métrica de Ajuste de Verosimilitud (Likelihood Fitness) usando GMM**")
+        print("\n**Métrica de Ajuste de Verosimilitud (Likelihood Fitness) usando GMM con tamaños igualados**")
 
+
+        n_real = len(self.real_data)
+        n_tvae = len(self.tvae_data)
+        n_kan = len(self.kan_data)
+        n_samples = min(n_real, n_tvae, n_kan)
+
+        tvae_sampled = self.tvae_data[self.numerical_columns].sample(n=n_samples, random_state=42)
+        kan_sampled = self.kan_data[self.numerical_columns].sample(n=n_samples, random_state=42)
+        real_sampled = self.real_data[self.numerical_columns].sample(n=n_samples, random_state=42)
+        '''
+        n_real = len(self.real_data)
+        tvae_sampled = self.tvae_data[self.numerical_columns].sample(n=n_real, random_state=42)
+        kan_sampled = self.kan_data[self.numerical_columns].sample(n=n_real, random_state=42)
+        real_sampled = self.real_data[self.numerical_columns]'''
+
+        # GMM entrenado sobre datos reales
         gmm_real = GaussianMixture(n_components=n_components, random_state=42)
-        gmm_real.fit(self.real_data[self.numerical_columns])
+        gmm_real.fit(real_sampled)
 
-        Lsyn_tvae = gmm_real.score_samples(self.tvae_data[self.numerical_columns]).mean()
-        Lsyn_kan = gmm_real.score_samples(self.kan_data[self.numerical_columns]).mean()
+        Lsyn_tvae = gmm_real.score_samples(tvae_sampled).mean()
+        Lsyn_kan = gmm_real.score_samples(kan_sampled).mean()
 
+        # GMM entrenado sobre muestras igualadas de TVAE
         gmm_tvae = GaussianMixture(n_components=n_components, random_state=42)
-        gmm_tvae.fit(self.tvae_data[self.numerical_columns])
+        gmm_tvae.fit(tvae_sampled)
 
+        # GMM entrenado sobre muestras igualadas de KAN
         gmm_kan = GaussianMixture(n_components=n_components, random_state=42)
-        gmm_kan.fit(self.kan_data[self.numerical_columns])
+        gmm_kan.fit(kan_sampled)
 
-        Ltest_tvae = gmm_tvae.score_samples(self.real_data[self.numerical_columns]).mean()
-        Ltest_kan = gmm_kan.score_samples(self.real_data[self.numerical_columns]).mean()
+        # Verosimilitud del conjunto real bajo GMM entrenado con cada generador
+        Ltest_tvae = gmm_tvae.score_samples(real_sampled).mean()
+        Ltest_kan = gmm_kan.score_samples(real_sampled).mean()
 
         print(f"TVAE - Lsyn: {Lsyn_tvae:.4f}, Ltest: {Ltest_tvae:.4f}")
         print(f"KAN  - Lsyn: {Lsyn_kan:.4f}, Ltest: {Ltest_kan:.4f}")
+
+
 
 
     def compute_js_divergence(self):
@@ -272,20 +299,227 @@ class SyntheticDataEvaluator:
         print(f"TVAE - Duplicados: {dupes_tvae}, Ratio: {ratio_tvae:.2%}")
         print(f"KAN  - Duplicados: {dupes_kan}, Ratio: {ratio_kan:.2%}")
 
+
+ 
+
+
+    def evaluate_variable_dependency_modeling(self):
+        print("\nEvaluación de preservación de relaciones entre variables (Modelado supervisado multivariable):")
+
+        for col in self.real_data.columns:
+            if col == target:
+                continue  # Excluir esta variable
+            if col not in self.numerical_columns and col not in self.categorical_columns:
+                continue
+
+            print(f"\nVariable objetivo: {col}")
+            is_categorical = col in self.categorical_columns
+
+            X_real = self.real_data.drop(columns=[col])
+            y_real = self.real_data[col]
+            X_tvae = self.tvae_data.drop(columns=[col])
+            y_tvae = self.tvae_data[col]
+            X_kan = self.kan_data.drop(columns=[col])
+            y_kan = self.kan_data[col]
+
+            if is_categorical:
+                model_tvae = RandomForestClassifier(n_estimators=100, random_state=42)
+                model_kan = RandomForestClassifier(n_estimators=100, random_state=42)
+            else:
+                model_tvae = RandomForestRegressor(n_estimators=100, random_state=42)
+                model_kan = RandomForestRegressor(n_estimators=100, random_state=42)
+
+            model_tvae.fit(X_tvae, y_tvae)
+            model_kan.fit(X_kan, y_kan)
+
+            preds_tvae = model_tvae.predict(X_real)
+            preds_kan = model_kan.predict(X_real)
+
+            if is_categorical:
+                acc_tvae = accuracy_score(y_real, preds_tvae)
+                acc_kan = accuracy_score(y_real, preds_kan)
+                print(f"TVAE → Real  - Accuracy: {acc_tvae:.4f}")
+                print(f"KAN  → Real  - Accuracy: {acc_kan:.4f}")
+            else:
+                mae_tvae = mean_absolute_error(y_real, preds_tvae)
+                mae_kan = mean_absolute_error(y_real, preds_kan)
+                print(f"TVAE → Real  - MAE: {mae_tvae:.4f}")
+                print(f"KAN  → Real  - MAE: {mae_kan:.4f}")
+
+        self.plot_dependency_modeling_results()
+
+
+    def plot_dependency_modeling_results(self):
+        maes_tvae = []
+        maes_kan = []
+        labels = []
+
+        for col in self.real_data.columns:
+            if col == target:
+                continue  # Excluir esta variable
+            if col not in self.numerical_columns and col not in self.categorical_columns:
+                continue
+
+            X_real = self.real_data.drop(columns=[col])
+            y_real = self.real_data[col]
+            X_tvae = self.tvae_data.drop(columns=[col])
+            y_tvae = self.tvae_data[col]
+            X_kan = self.kan_data.drop(columns=[col])
+            y_kan = self.kan_data[col]
+
+            if col in self.categorical_columns:
+                model_tvae = RandomForestClassifier(n_estimators=100, random_state=42)
+                model_kan = RandomForestClassifier(n_estimators=100, random_state=42)
+                model_tvae.fit(X_tvae, y_tvae)
+                model_kan.fit(X_kan, y_kan)
+                acc_tvae = accuracy_score(y_real, model_tvae.predict(X_real))
+                acc_kan = accuracy_score(y_real, model_kan.predict(X_real))
+                maes_tvae.append(acc_tvae)
+                maes_kan.append(acc_kan)
+            else:
+                model_tvae = RandomForestRegressor(n_estimators=100, random_state=42)
+                model_kan = RandomForestRegressor(n_estimators=100, random_state=42)
+                model_tvae.fit(X_tvae, y_tvae)
+                model_kan.fit(X_kan, y_kan)
+                mae_tvae = mean_absolute_error(y_real, model_tvae.predict(X_real))
+                mae_kan = mean_absolute_error(y_real, model_kan.predict(X_real))
+                maes_tvae.append(mae_tvae)
+                maes_kan.append(mae_kan)
+
+            labels.append(col)
+
+        x = np.arange(len(labels))
+        width = 0.35
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        bars1 = ax.bar(x - width / 2, maes_tvae, width, label='TVAE')
+        bars2 = ax.bar(x + width / 2, maes_kan, width, label='KAN')
+
+        ax.set_ylabel("MAE (o Accuracy si es categórica)")
+        ax.set_title("Preservación de relaciones entre variables")
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, rotation=45)
+        ax.legend()
+        ax.grid(True, linestyle="--", alpha=0.5)
+        plt.tight_layout()
+
+        output_path = os.path.join(self.output_dir, "variable_dependency_comparison.png")
+        plt.savefig(output_path)
+        plt.close()
+
+
+    def evaluate_tstr_trts(self, target_column):
+        print("\nEvaluación TSTR (Train Synthetic, Test Real) y TRTS (Train Real, Test Synthetic):")
+
+        # Separar atributos y clases
+        X_real = self.real_data.drop(columns=[target_column])
+        y_real = self.real_data[target_column]
+        X_tvae = self.tvae_data.drop(columns=[target_column])
+        y_tvae = self.tvae_data[target_column]
+        X_kan = self.kan_data.drop(columns=[target_column])
+        y_kan = self.kan_data[target_column]
+
+        model = RandomForestClassifier(n_estimators=100, random_state=42)
+
+        # TSTR
+        model.fit(X_tvae, y_tvae)
+        acc_tstr_tvae = accuracy_score(y_real, model.predict(X_real))
+
+        model.fit(X_kan, y_kan)
+        acc_tstr_kan = accuracy_score(y_real, model.predict(X_real))
+
+        # TRTS
+        model.fit(X_real, y_real)
+        acc_trts_tvae = accuracy_score(y_tvae, model.predict(X_tvae))
+        acc_trts_kan = accuracy_score(y_kan, model.predict(X_kan))
+
+        print(f"TSTR - TVAE → Real: Accuracy = {acc_tstr_tvae:.4f}")
+        print(f"TSTR - KAN  → Real: Accuracy = {acc_tstr_kan:.4f}")
+        print(f"TRTS - Real → TVAE: Accuracy = {acc_trts_tvae:.4f}")
+        print(f"TRTS - Real → KAN : Accuracy = {acc_trts_kan:.4f}")
+
+
+    def compare_feature_importances(self, target_column):
+        print("\nComparación de Importancia de Variables (Random Forest):")
+
+        X_real = self.real_data.drop(columns=[target_column])
+        y_real = self.real_data[target_column]
+        X_tvae = self.tvae_data.drop(columns=[target_column])
+        y_tvae = self.tvae_data[target_column]
+        X_kan = self.kan_data.drop(columns=[target_column])
+        y_kan = self.kan_data[target_column]
+
+        rf_real = RandomForestClassifier(n_estimators=100, random_state=42).fit(X_real, y_real)
+        rf_tvae = RandomForestClassifier(n_estimators=100, random_state=42).fit(X_tvae, y_tvae)
+        rf_kan = RandomForestClassifier(n_estimators=100, random_state=42).fit(X_kan, y_kan)
+
+        importances = pd.DataFrame({
+            "Variable": X_real.columns,
+            "Real": rf_real.feature_importances_,
+            "TVAE": rf_tvae.feature_importances_,
+            "KAN": rf_kan.feature_importances_,
+        })
+
+        print(importances)
+
+        importances.set_index("Variable").plot.bar(figsize=(12, 6))
+        plt.title("Importancia de Variables - Random Forest")
+        plt.ylabel("Importancia")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.grid(True, linestyle="--", alpha=0.5)
+        plt.savefig(os.path.join(self.output_dir, "feature_importance_comparison.png"))
+        plt.close()
+
+        
+
+    def compute_mmd(self, gamma=1.0):
+        print("\n**Distancia MMD (Maximum Mean Discrepancy) con kernel RBF**")
+
+        real = self.real_data[self.numerical_columns].values
+        tvae = self.tvae_data[self.numerical_columns].sample(n=len(real), random_state=42).values
+        kan = self.kan_data[self.numerical_columns].sample(n=len(real), random_state=42).values
+
+        def mmd(x, y):
+            xx = rbf_kernel(x, x, gamma)
+            yy = rbf_kernel(y, y, gamma)
+            xy = rbf_kernel(x, y, gamma)
+            return np.mean(xx) + np.mean(yy) - 2 * np.mean(xy)
+
+        mmd_tvae = mmd(real, tvae)
+        mmd_kan = mmd(real, kan)
+
+        print(f"TVAE - MMD: {mmd_tvae:.4f}")
+        print(f"KAN  - MMD: {mmd_kan:.4f}")
+
+        # Guardar resultados en archivo de salida
+        with open(os.path.join(self.output_dir, "mmd_scores.txt"), "w", encoding="utf-8") as f:
+            f.write("Distancia MMD (Maximum Mean Discrepancy)\n")
+            f.write(f"TVAE - MMD: {mmd_tvae:.6f}\n")
+            f.write(f"KAN  - MMD: {mmd_kan:.6f}\n")
+
+
+
+
+
 if __name__ == "__main__":
     os.makedirs("dbeval", exist_ok=True)
     sys.stdout = DualOutput("dbeval/results.txt")
 
 
-    real_path = "/home/gtav-tft/Desktop/SYNTHEMA/TVAE/SYNTHDATA/diabetes.csv"
-    tvae_path = "/home/gtav-tft/Desktop/SYNTHEMA/TVAE/SYNTHDATA/synthetic_diabetes_mlp.csv"
-    kan_path = "/home/gtav-tft/Desktop/SYNTHEMA/TVAE/SYNTHDATA/synthetic_diabetes_kan.csv"
+    real_path = "/home/gtav-tft/Desktop/paula/eval/DATASETS/Heart Prediction Quantum DatasetSimple.csv"
+    tvae_path = "/home/gtav-tft/Desktop/paula/eval/DATASETS/synthetic_heartdisease_mlp.csv"
+    kan_path = "/home/gtav-tft/Desktop/paula/eval/DATASETS/synthetic_heartdisease_MultKAN.csv"
 
     evaluator = SyntheticDataEvaluator(
         real_data_path=real_path,
         tvae_data_path=tvae_path,
         kan_data_path=kan_path,
-        categorical_columns=["Outcome"]
+        categorical_columns= [
+    'HeartDisease',
+    'Gender'
+
+]
     )
 
     print("Columnas del dataset real:")
@@ -298,7 +532,7 @@ if __name__ == "__main__":
     evaluator.plot_distributions()
 
     print("\n================ EFICACIA EN MODELOS DE ML =================")
-    evaluator.evaluate_ml_efficacy(target_column="Outcome")
+    evaluator.evaluate_ml_efficacy(target_column=target)
 
     print("\n================ TEST KOLMOGOROV-SMIRNOV =================")
     evaluator.compute_ks_test()
@@ -309,18 +543,33 @@ if __name__ == "__main__":
     print("\n================ JENSEN-SHANNON DIVERGENCE =================")
     evaluator.compute_js_divergence()
 
-    print("\n================ PCA Y t-SNE: PROYECCIONES =================")
-    evaluator.plot_dimensionality_reduction(method='PCA')
-    evaluator.plot_dimensionality_reduction(method='t-SNE')
+    #print("\n================ PCA Y t-SNE: PROYECCIONES =================")
+    #evaluator.plot_dimensionality_reduction(method='PCA')
+    #evaluator.plot_dimensionality_reduction(method='t-SNE')
 
     print("\n================ PCA Y t-SNE: MÉTRICAS =================")
-    evaluator.compute_pca_and_tsne_metrics()
+    #evaluator.compute_pca_and_tsne_metrics()
 
     print("\n================ CORRELACIÓN (MAE & SPEARMAN) =================")
     evaluator.compute_correlation_metrics()
 
     print("\n================ DISTANCIA DE FRECHET =================")
-    evaluator.compute_frechet_distance()
+    #evaluator.compute_frechet_distance()
 
     print("\n================ COMPROBACIÓN DE DUPLICADOS =================")
     evaluator.check_duplicate_rows()
+
+    print("\n================ RELACIONES ENTRE VARIABLES =================")
+    evaluator.evaluate_variable_dependency_modeling()
+
+    print("\n================ TSTR / TRTS =================")
+    evaluator.evaluate_tstr_trts(target_column=target)
+
+    print("\n================ COMPARACIÓN DE IMPORTANCIA DE VARIABLES =================")
+    evaluator.compare_feature_importances(target_column=target)
+
+    print("\n================ DISTANCIA MMD =================")
+    evaluator.compute_mmd()
+
+
+
