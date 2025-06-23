@@ -52,11 +52,11 @@ class SyntheticDataEvaluator:
         self._preprocess_data()
 
     def _preprocess_data(self):
-        # Escalado de datos numéricos
+   
         self.real_data[self.numerical_columns] = self.scaler.fit_transform(self.real_data[self.numerical_columns])
         self.tvae_data[self.numerical_columns] = self.scaler.transform(self.tvae_data[self.numerical_columns])
         self.kan_data[self.numerical_columns] = self.scaler.transform(self.kan_data[self.numerical_columns])
-        # Codificación de datos categóricos
+      
         for col in self.categorical_columns:
             le = LabelEncoder()
             self.real_data[col] = le.fit_transform(self.real_data[col].astype(str))
@@ -142,21 +142,20 @@ class SyntheticDataEvaluator:
         kan_sampled = self.kan_data[self.numerical_columns].sample(n=n_samples, random_state=42)
         real_sampled = self.real_data[self.numerical_columns].sample(n=n_samples, random_state=42)
 
-        # GMM entrenado sobre datos reales
+       
         gmm_real = GaussianMixture(n_components=n_components, random_state=42)
         gmm_real.fit(real_sampled)
         Lsyn_tvae = gmm_real.score_samples(tvae_sampled).mean()
         Lsyn_kan = gmm_real.score_samples(kan_sampled).mean()
 
-        # GMM entrenado sobre muestras igualadas de TVAE
+     
         gmm_tvae = GaussianMixture(n_components=n_components, random_state=42)
         gmm_tvae.fit(tvae_sampled)
 
-        # GMM entrenado sobre muestras igualadas de KAN
+      
         gmm_kan = GaussianMixture(n_components=n_components, random_state=42)
         gmm_kan.fit(kan_sampled)
 
-        # Verosimilitud del conjunto real bajo GMM entrenado con cada generador
         Ltest_tvae = gmm_tvae.score_samples(real_sampled).mean()
         Ltest_kan = gmm_kan.score_samples(real_sampled).mean()
         print(f"TVAE - Lsyn: {Lsyn_tvae:.4f}, Ltest: {Ltest_tvae:.4f}")
@@ -170,18 +169,18 @@ class SyntheticDataEvaluator:
         for name, synthetic in [('TVAE', self.tvae_data), ('KAN', self.kan_data)]:
             print(f"\n=== {name} ===")
 
-            # MAE de matrices de correlación (Pearson)
+        
             real_corr = self.real_data[self.numerical_columns].corr()
             synth_corr = synthetic[self.numerical_columns].corr()
             mae = np.mean(np.abs(real_corr - synth_corr).values)
             print(f"MAE de la matriz de correlación (Pearson): {mae:.4f}")
 
-            # Muestreo para Spearman
+  
             real_sample = self.real_data[self.numerical_columns].sample(frac=1, random_state=42)
             synth_sample = synthetic[self.numerical_columns].sample(frac=1, random_state=42)
             min_len = min(len(real_sample), len(synth_sample))
 
-            # Cálculo de Spearman por variable
+            
             spearman_vals = {}
             pvals = {}
             for col in self.numerical_columns:
@@ -189,11 +188,11 @@ class SyntheticDataEvaluator:
                 spearman_vals[col] = coef
                 pvals[col] = pval
 
-            # Conteo de correlaciones significativas
+       
             significant = sum(1 for p in pvals.values() if p < 0.05)
             print(f"Variables con correlación de Spearman significativa (p < 0.05): {significant} / {len(self.numerical_columns)}")
 
-            # Tabla Spearman
+        
             print("{:<20} {:>10} {:>12}".format("Variable", "Coef", "p-valor"))
             print("-" * 45)
             for col in self.numerical_columns:

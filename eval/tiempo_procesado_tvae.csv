@@ -1,0 +1,17 @@
+Model,Architecture,Device,Time_seconds
+tvae,10-5,CPU,29.2001
+tvae,10-5,CUDA,35.6147
+tvae,16-8,CPU,29.9099
+tvae,16-8,CUDA,35.2746
+tvae,32-16,CPU,28.443
+tvae,32-16,CUDA,35.9951
+tvae,64-32,CPU,26.8123
+tvae,64-32,CUDA,31.3189
+tvae_MultKAN,10-5,CPU,22.475
+tvae_MultKAN,10-5,CUDA,35.3817
+tvae_MultKAN,16-8,CPU,23.4476
+tvae_MultKAN,16-8,CUDA,33.9293
+tvae_MultKAN,32-16,CPU,28.1124
+tvae_MultKAN,32-16,CUDA,34.5183
+tvae_MultKAN,64-32,CPU,36.1616
+tvae_MultKAN,64-32,CUDA,34.0715

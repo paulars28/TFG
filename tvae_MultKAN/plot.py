@@ -14,10 +14,6 @@ figures_folder = "./plot"
 
 estructura = "decoder"
 arquitectura = "32-16" 
-#modelo_path = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/resultado_poda_node/32-16-0.10/"+estructura+"_prunednode_state"
-#modelo_cache = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/resultado_poda_node/32-16-0.10/"+estructura+"_prunednode_cache_data"
-#modelo_path = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_stateHeartDisease"
-#modelo_cache = "/home/gtav-tft/Desktop/paula/eval/COMP_TAMAÑOSRED/"+arquitectura+"/final_"+estructura+"_cache_dataHeartDisease"
 modelo_path = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/MODELOS/final_"+estructura+"_stateHeartDisease"
 modelo_cache = "/home/gtav-tft/Desktop/paula/tvae_MultKAN/MODELOS/final_"+estructura+"_cache_dataHeartDisease"
 device= 'cuda'

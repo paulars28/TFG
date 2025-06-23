@@ -34,11 +34,6 @@ tvae = TVAE(
 )
 
 
-print("TVAE is defined in:", TVAE.__module__)
-
-
-print(hasattr(tvae, 'fit_tvae')) 
-
 
 tvae.fit_tvae(real_data, discrete_columns)
 

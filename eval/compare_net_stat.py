@@ -27,7 +27,7 @@ def parse_metrics(filepath):
     metrics = {}
 
     def extract_metrics(test_name, section_title, value_label):
-        # patrón más robusto
+        
         pattern = re.compile(
             rf"================ {re.escape(section_title)}: =================\n\n"
             r"=== TVAE vs REAL ===\n(.*?)\n\n=== KAN vs REAL ===\n(.*?)(?=\n=+|\Z)",

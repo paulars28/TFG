@@ -212,9 +212,6 @@ class TVAE(BaseSynthesizer):
             plt.close()
 
 
-        print("Training completed.", flush=True)
-
-
     @random_state
     def sample(self, samples):
         """Sample data similar to the training data.

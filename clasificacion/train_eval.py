@@ -205,15 +205,13 @@ def plot_loss_acc(train_loss_hist, test_loss_hist, train_acc_hist, test_acc_hist
 
 def plot_confusion_matrix_heatmap(all_labels, all_preds, model_name, save=True):
 
-    # Calcular la matriz de confusión
     cm = confusion_matrix(all_labels, all_preds)
 
-    # Crear el mapa de calor
+
     plt.figure(figsize=(6, 5))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False,
                 annot_kws={"size": 12})
     
-    # Etiquetas y título en castellano técnico
     plt.xlabel("Etiqueta predicha", fontsize=12)
     plt.ylabel("Etiqueta real", fontsize=12)
     plt.title(f"Matriz de confusión – {model_name}", fontsize=14)
@@ -221,7 +219,6 @@ def plot_confusion_matrix_heatmap(all_labels, all_preds, model_name, save=True):
     plt.yticks(fontsize=10)
     plt.tight_layout()
 
-    # Guardar si se solicita
     if save:
         plt.savefig(f"{model_name}_matriz_confusion.png", dpi=300)
     plt.close()

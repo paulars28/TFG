@@ -1,0 +1,5 @@
+Modelo,Arquitectura,Mean_Time_seconds
+TVAE,(16-8),2.1e-05
+CTGAN,(24-12),0.000519
+TVAE,(10-5),2e-06
+CTGAN,(10-5),5.5e-05

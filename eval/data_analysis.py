@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score, classification_report
 
 df = pd.read_csv('Heart Prediction Quantum Dataset.csv')  
 
-# Data visualization
+
 plt.figure(figsize=(12, 6))
 df.hist(figsize=(10, 10), bins=20)
 plt.suptitle("Feature Distributions")
@@ -19,13 +19,13 @@ plt.savefig("feature_distributions.png", dpi= 300)
 plt.show()
 
 
-# Scatter plot matrix
+
 sns.pairplot(df, hue="HeartDisease")
 plt.savefig("scatter_matrix.png", dpi= 300)
 plt.show()
 
 
-# Correlation heatmap
+
 plt.figure(figsize=(10, 6))
 sns.heatmap(df.corr(), annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Feature Correlations")

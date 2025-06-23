@@ -425,10 +425,10 @@ def plot_mmd(df, images_file):
 
 
 def plot_all_mae_variables(df, images_file):
-    # Expresión regular para detectar columnas tipo MAE_xxx_ctgan
+    
     mae_pattern = re.compile(r"MAE_(.+)_ctgan")
 
-    # Extraer variables comunes a ambos modelos (ctgan y KAN)
+
     variables = {
         mae_pattern.match(col).group(1)
         for col in df.columns
@@ -436,14 +436,14 @@ def plot_all_mae_variables(df, images_file):
         and f"MAE_{mae_pattern.match(col).group(1)}_KAN" in df.columns
     }
 
-    # Asegurarse de incluir 'Corr' si está presente
+   
     if 'MAE_Corr_ctgan' in df.columns and 'MAE_Corr_KAN' in df.columns:
         variables.add('Corr')
 
-    # Ordenar variables alfabéticamente y colocar 'Corr' (HeartDisease) al final
+   
     variables = sorted([v for v in variables if v != "Corr"]) + ["Corr"]
 
-    # Construcción del dataframe de graficación
+    
     data = []
     for idx, row in df.iterrows():
         for var in variables:
@@ -457,7 +457,7 @@ def plot_all_mae_variables(df, images_file):
 
     df_plot = pd.DataFrame(data)
 
-    # Orden explícito de las variables para el gráfico (última: HeartDisease)
+ 
     orden_vars = sorted([v for v in df_plot["Variable"].unique() if v != "HeartDisease"]) + ["HeartDisease"]
 
     g = sns.catplot(
@@ -525,7 +525,7 @@ def plot_parallel_trts_tstr(df, images_file, modelo_clasificador):
             dash = estilo_map[modelo]
             nombre = f"{arch} - {modelo}"
 
-            # Coordenadas por métrica
+             
             fig.add_trace(go.Scatter(
                 x=metricas,
                 y=[row[m.capitalize()] for m in metricas],
@@ -560,17 +560,17 @@ def plot_parallel_trts_tstr(df, images_file, modelo_clasificador):
 
 if __name__ == "__main__":
     df_final = comparar_resultados(result_files)
-    #plot_metrics_accf1(df_final, images_file)
-    #compare_MAE(df_final, images_file)
-    #plot_importance(df_final, images_file)
-    #plot_trts_tstr_randomForest(df_final, images_file)
-    #plot_trts_tstr_gradientBoost(df_final, images_file)
-    #plot_trts_tstr_logisticRegression(df_final, images_file)
-    #plot_mmd(df_final, images_file)
-    #plot_mae_variables(df_final, images_file)    
-    #plot_parallel_trts_tstr(df_final, images_file, "RandomForest")
-    #plot_parallel_trts_tstr(df_final, images_file, "GradientBoosting")
-    #plot_parallel_trts_tstr(df_final, images_file, "LogisticRegression")    
+    plot_metrics_accf1(df_final, images_file)
+    compare_MAE(df_final, images_file)
+    plot_importance(df_final, images_file)
+    plot_trts_tstr_randomForest(df_final, images_file)
+    plot_trts_tstr_gradientBoost(df_final, images_file)
+    plot_trts_tstr_logisticRegression(df_final, images_file)
+    plot_mmd(df_final, images_file)
+    plot_mae_variables(df_final, images_file)    
+    plot_parallel_trts_tstr(df_final, images_file, "RandomForest")
+    plot_parallel_trts_tstr(df_final, images_file, "GradientBoosting")
+    plot_parallel_trts_tstr(df_final, images_file, "LogisticRegression")    
     plot_all_mae_variables(df_final, images_file)
 
 
